@@ -48,28 +48,6 @@ No installation. No internet required. No login. Just open the HTML file in any 
 | 📧 Email | 2 | Outlook PST/OST files, Outlook attachment cache |
 
 ---
-
-## ⛓️ Attack Chain Reference
-
-`attack-chain.html` maps forensic artifacts to **MITRE ATT&CK phases**. For every phase of an attack it shows what the attacker does, which artifacts they leave behind, how to detect it as an investigator, and exact commands to run.
-
-| # | Phase | Key Artifacts |
-|---|---|---|
-| 01 | 🔭 Reconnaissance | DNS logs, AD enumeration, WLAN history, system enumeration commands |
-| 02 | 🎣 Initial Access | Email artifacts, browser downloads, Zone.Identifier, RDP/VPN logons |
-| 03 | ⚡ Execution | Prefetch, PowerShell EID 4104, Process Creation EID 4688, AmCache/ShimCache |
-| 04 | 🔒 Persistence | Run keys, Scheduled Tasks, Windows Services, WMI Subscriptions |
-| 05 | ⬆️ Privilege Escalation | EID 4672, UAC bypass registry artifacts, token impersonation, account manipulation |
-| 06 | 🧹 Defense Evasion | Event log clearing EID 1102/104, Defender tampering, VSS deletion, timestomping |
-| 07 | 🔑 Credential Access | LSASS access Sysmon EID 10, Kerberos attacks, browser & credential manager theft |
-| 08 | 🔎 Discovery | EID 4688 enumeration commands, RunMRU, SRUM, Shellbags, SMB share access |
-| 09 | 🔀 Lateral Movement | Network logons EID 4624 Type 3, PsExec service install EID 7045, RDP |
-| 10 | 📦 Collection | File access MRU/LNK/$MFT, archive tool Prefetch, staged data traces |
-| 11 | 📤 Exfiltration | Cloud sync logs, USB USBSTOR/Shellbags/LNK, SRUM network bytes |
-| 12 | 💥 Impact | $UsnJrnl mass rename pattern, VSS deletion, wipe tool Prefetch |
-
----
-
 ## ✨ Features
 
 **Search**
