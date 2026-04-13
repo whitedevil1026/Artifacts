@@ -1,117 +1,136 @@
-# 🔍 WinForensics
+# 🔍 WinForensics — Windows Forensic Artifact Reference
 
-A comprehensive Windows forensic artifacts reference — built for investigators, incident responders, and security analysts who need fast, reliable answers during live investigations.
+A comprehensive Windows forensic artifacts reference built for investigators, incident responders, and security analysts who need fast, reliable answers during live investigations.
 
-**Live site:** `https://yourusername.github.io/winforensics`
+**Live site:** https://windowsartifacts.vercel.app
 
 ---
 
-## 📦 What's Inside
+## 📖 About This Project
+
+WinForensics is a single-file offline reference tool for Windows digital forensics. During a live investigation you can open it on any device — desktop, laptop, or phone — and instantly find:
+
+- The exact registry path or file location for any artifact
+- What the artifact proves forensically and when to look at it
+- Which Windows versions contain it (XP through Windows 11)
+- Which tools to use to parse it
+- Ready-to-run commands you can copy with one click
+- Correlated Windows Event IDs
+
+No installation. No internet required. No login. Just open the HTML file in any browser.
+
+---
+
+## 📦 Files
 
 | File | Description |
-|------|-------------|
-| `windows-artifacts.html` | Main cheat sheet — 117 artifacts, 20 categories |
-
-### Coming Soon
-- `attack-chain.html` — Kill chain phase → artifact mapping
-- `memory-forensics.html` — Full Volatility 3 reference
-- `ad-deepdive.html` — Active Directory forensics deep dive
+|---|---|
+| `windows-artifacts.html` | Main reference — 137 artifacts, 21 categories |
+| `attack-chain.html` | MITRE ATT&CK kill chain — 42 artifacts across 12 attack phases |
+| `memory-forensics.html` | Volatility 3 memory forensics reference *(coming soon)* |
+| `ad-deepdive.html` | Active Directory forensics deep dive *(coming soon)* |
 
 ---
 
-## 🗂️ Categories Covered
+## 🗂️ What's Covered — 137 Artifacts, 21 Categories
 
-| Category | Artifacts |
-|----------|-----------|
-| Registry | SAM, SYSTEM, SOFTWARE, NTUSER.DAT, USRCLASS.DAT, AmCache, ShimCache |
-| Event Logs | Security, System, Application, PowerShell, Sysmon, Defender, Task Scheduler |
-| File System | Prefetch, LNK, Jump Lists, Shellbags, MFT, UsnJrnl, Recycle Bin, VSS |
-| Browser | Chrome, Edge, Firefox, Internet Explorer |
-| Browser Deep Dive | IndexedDB, Extensions, Incognito, Cache, Passwords, Sessions, Cookies |
-| Network | Network Profiles, RDP, DNS Cache, Firewall Logs, ARP Cache |
-| Execution | UserAssist, BAM/DAM, SRUM, Run Keys, CapabilityAccessManager |
-| Memory | hiberfil.sys, Pagefile, Crash Dumps |
-| User Activity | RecentDocs, TypedURLs, Timeline, Sticky Notes, Thumbcache |
-| USB & Devices | USB History, setupapi.dev.log |
-| Persistence | Scheduled Tasks, Services, WMI Subscriptions, Bootkits, DLL Hijacking |
-| Cloud & Sync | OneDrive, Dropbox, Google Drive |
-| Registry MRU | OpenSaveMRU, LastVisitedMRU, RunMRU, WordWheelQuery, Office MRU |
-| LOLBAS | certutil, mshta, rundll32, wscript, regsvr32, bitsadmin, msiexec, wmic |
-| Credentials | LSASS, Credential Manager, DPAPI, SAM+SYSTEM, Kerberos, WiFi |
-| Anti-Forensics | CCleaner, BitLocker, cipher.exe, SDelete, VSS Deletion, Log Manipulation |
-| Lateral Movement | PsExec, SMB Shares, WinRM, DCOM |
-| Email | Outlook PST/OST, Attachment Cache |
-| Active Directory | NTDS.dit, DCSync, GPO Artifacts |
-| Misc | Notepad++, Windows Search, Windows Recall/Copilot |
+| Category | Count | What's Inside |
+|---|---|---|
+| 🧹 Anti-Forensics | 14 | CCleaner artifacts, BitLocker, cipher.exe /w, SDelete wipe patterns, VSS deletion evidence, event log manipulation, timestomping detection, MFT anti-forensics, renamed binary detection |
+| 🗂️ File System | 11 | Prefetch, LNK shortcut files, Jump Lists, Shellbags, $MFT, $UsnJrnl/$LogFile, Recycle Bin, Volume Shadow Copies, Thumbs.db, Zone.Identifier ADS, Windows Time Rules ($SI vs $FN) |
+| 🌐 Browser Deep Dive | 11 | Chrome IndexedDB, browser extensions, incognito/private mode artifacts, browser cache, saved passwords, session & tab recovery, cookies deep dive, favicons, HSTS/network state, browser sync, download history |
+| 📜 Event Logs | 10 | Security log, System log, Application log, PowerShell (EID 4103/4104), Sysmon, Windows Defender, Task Scheduler, Windows Services (EID 7034/7035/7036/7040/7045) |
+| 📋 Registry MRU | 10 | OpenSaveMRU, LastVisitedMRU, RunMRU, WordWheelQuery, MS Office MRU, TypedPaths, CIDSizeMRU, AppCompatFlags, XP Search ACMRU |
+| 📋 Registry | 8 | SAM hive, SYSTEM hive, SOFTWARE hive, NTUSER.DAT, USRCLASS.DAT, AmCache, ShimCache, Timezone |
+| 🌐 Browser | 8 | Chrome, Edge, Firefox, Internet Explorer/WebCache, IE/Edge file:// local history, Flash/Super Cookies (LSO), Google Analytics cookies, per-browser cookie breakdown |
+| 🐉 LOLBAS | 8 | certutil.exe, mshta.exe, rundll32.exe, wscript/cscript, regsvr32.exe, bitsadmin/BITS, msiexec.exe, wmic.exe |
+| 🔑 Credentials | 6 | LSASS memory, Windows Credential Manager, DPAPI master keys, SAM+SYSTEM hash extraction, Kerberos tickets (TGT/TGS), WiFi passwords |
+| ▶️ Execution | 6 | UserAssist, BAM/DAM, SRUM (System Resource Usage Monitor), Run/RunOnce keys, CapabilityAccessManager, RecentApps (Win10) |
+| 🔌 USB & Devices | 6 | USB device history (USBSTOR), setupapi.dev.log, MountPoints2 user correlation, USB volume serial number, USB drive letter & volume name, PnP events (EID 20001) |
+| 📡 Network | 6 | Network connection artifacts, RDP artifacts, DNS cache, Windows Firewall logs, ARP cache/routing table, WLAN event log |
+| 👤 User Activity | 5 | Recent documents (RecentDocs), TypedURLs, Windows Timeline (ActivitiesCache), Sticky Notes, Thumbcache |
+| 🔒 Persistence | 5 | Scheduled tasks, Windows services, WMI subscriptions, Boot/UEFI/MBR persistence, DLL hijacking/search order |
+| 🔧 Misc | 4 | Notepad++ recent files, Windows Search index, Skype history & chat logs, Windows Copilot/AI activity |
+| 🔀 Lateral Movement | 4 | PsExec artifacts, SMB/network share artifacts, WinRM/PowerShell remoting, DCOM/MMC lateral movement |
+| 🔐 Account Usage | 4 | Logon types reference (EID 4624), success & failure logon events, NTLM & Kerberos authentication events, last login & password change (SAM) |
+| 🧠 Memory | 3 | Hibernate file (hiberfil.sys), pagefile/swapfile, crash dumps (MEMORY.DMP) |
+| ☁️ Cloud & Sync | 3 | OneDrive artifacts, Dropbox artifacts, Google Drive/Backup & Sync |
+| 🏛️ Active Directory | 3 | NTDS.dit (AD database), DCSync artifacts, Group Policy (GPO) artifacts |
+| 📧 Email | 2 | Outlook PST/OST files, Outlook attachment cache |
+
+---
+
+## ⛓️ Attack Chain Reference
+
+`attack-chain.html` maps forensic artifacts to **MITRE ATT&CK phases**. For every phase of an attack it shows what the attacker does, which artifacts they leave behind, how to detect it as an investigator, and exact commands to run.
+
+| # | Phase | Key Artifacts |
+|---|---|---|
+| 01 | 🔭 Reconnaissance | DNS logs, AD enumeration, WLAN history, system enumeration commands |
+| 02 | 🎣 Initial Access | Email artifacts, browser downloads, Zone.Identifier, RDP/VPN logons |
+| 03 | ⚡ Execution | Prefetch, PowerShell EID 4104, Process Creation EID 4688, AmCache/ShimCache |
+| 04 | 🔒 Persistence | Run keys, Scheduled Tasks, Windows Services, WMI Subscriptions |
+| 05 | ⬆️ Privilege Escalation | EID 4672, UAC bypass registry artifacts, token impersonation, account manipulation |
+| 06 | 🧹 Defense Evasion | Event log clearing EID 1102/104, Defender tampering, VSS deletion, timestomping |
+| 07 | 🔑 Credential Access | LSASS access Sysmon EID 10, Kerberos attacks, browser & credential manager theft |
+| 08 | 🔎 Discovery | EID 4688 enumeration commands, RunMRU, SRUM, Shellbags, SMB share access |
+| 09 | 🔀 Lateral Movement | Network logons EID 4624 Type 3, PsExec service install EID 7045, RDP |
+| 10 | 📦 Collection | File access MRU/LNK/$MFT, archive tool Prefetch, staged data traces |
+| 11 | 📤 Exfiltration | Cloud sync logs, USB USBSTOR/Shellbags/LNK, SRUM network bytes |
+| 12 | 💥 Impact | $UsnJrnl mass rename pattern, VSS deletion, wipe tool Prefetch |
 
 ---
 
 ## ✨ Features
 
-- **117 artifacts** across **20 categories**
-- **Live search** across all fields — paths, notes, event IDs, tools, commands
-- **Category filter** tabs for instant filtering
-- **428 exact commands** — one click to copy any command or path
-- **Forensic value rating** — CRITICAL / HIGH / MEDIUM / LOW per artifact
-- **Event ID references** per artifact
-- **OS version coverage** per artifact
-- **Fully offline** — no external dependencies, works without internet
-- **Mobile friendly** — works on phone during live investigations
+**Search**
+Type anything in the search bar — artifact name, registry path, file path, event ID, tool name, use case, or any keyword from the notes. Results update instantly.
 
----
+**Category Filter**
+21 category buttons at the top. Click any category to show only those artifacts. Combined with search for fast narrowing.
 
-## 🚀 How to Use Locally
+**Sort**
+Sort all visible artifacts by:
+- Default order
+- Name A → Z or Z → A
+- Priority: CRITICAL and HIGH first
+- Priority: LOW first
+- Category alphabetically
 
-Just open `windows-artifacts.html` in any browser. No server needed, no install, no dependencies.
+**One-Click Copy**
+Every registry path, file path, and command has a copy button next to it. Tap once to copy — no selecting text.
 
-```bash
-git clone https://github.com/yourusername/winforensics
-cd winforensics
-open windows-artifacts.html   # macOS
-start windows-artifacts.html  # Windows
-```
+**Quick Hives Strip**
+A strip at the top of the page with the 10 most critical forensic paths. One tap copies the full path instantly.
 
----
+**Forensic Value Rating**
+Every artifact is rated:
+- 🔴 CRITICAL (26) — must check on every investigation
+- 🟡 HIGH (80) — very important, check on most investigations
+- 🟢 MEDIUM (29) — situational value
+- ⚪ LOW (2) — supplementary
 
-## 📱 Mobile Use
+**Per-Artifact Details**
+Each artifact card shows:
+- Definition and forensic significance
+- Exact paths for all relevant Windows versions
+- Use cases — what questions this artifact answers
+- OS version coverage (XP through Windows 11)
+- Analysis tools
+- Ready-to-run commands
+- Correlated Event IDs
 
-Fully optimized for mobile. Pull it up on your phone mid-investigation to quickly check artifact paths, event IDs, or copy commands.
+**Mobile Optimised**
+Works on phone during live investigations. Single column layout, scrollable filter bar, scrollable command blocks, large tap targets on all copy buttons.
 
 ---
 
 ## 🛠️ Tools Referenced
 
-This reference covers artifacts analyzed by tools including:
-
-`Autopsy` `Volatility` `RegRipper` `Chainsaw` `Hayabusa` `Hindsight` `MFTECmd` `PECmd` `LECmd` `JLECmd` `AmcacheParser` `AppCompatCacheParser` `WxTCmd` `RBCmd` `SrumECmd` `Registry Explorer` `ShellBagsExplorer` `DB Browser for SQLite` `FTK Imager` `Velociraptor` `Plaso` `log2timeline` `Impacket` `Mimikatz`
-
----
-
-## 📌 Quick Reference — Most Important Event IDs
-
-| Event ID | Log | Meaning |
-|----------|-----|---------|
-| 4624 | Security | Successful logon |
-| 4625 | Security | Failed logon |
-| 4688 | Security | Process creation (with command line) |
-| 4698 | Security | Scheduled task created |
-| 4719 | Security | Audit policy changed |
-| 7045 | System | New service installed |
-| 1102 | Security | Security log cleared |
-| 104 | System | System log cleared |
-| 5140 | Security | Network share accessed |
-| 4662 | Security | AD object accessed (DCSync detection) |
-| 1 | Sysmon | Process creation |
-| 3 | Sysmon | Network connection |
-| 7 | Sysmon | Image/DLL loaded |
-| 10 | Sysmon | Process accessed (LSASS dump detection) |
+`Autopsy` `Volatility 3` `RegRipper` `Registry Explorer` `Chainsaw` `Hayabusa` `Hindsight` `MFTECmd` `PECmd` `LECmd` `JLECmd` `AmcacheParser` `AppCompatCacheParser` `SrumECmd` `EvtxECmd` `WxTCmd` `RBCmd` `ShellBagsExplorer` `DB Browser for SQLite` `FTK Imager` `Velociraptor` `Plaso` `log2timeline` `Impacket` `USB Detective` `SkypeLogView` `Nirsoft Suite`
 
 ---
 
 ## ⚠️ Disclaimer
 
-This reference is intended for **authorized forensic investigations, incident response, and security research only**. All information is provided for defensive and educational purposes.
-
----
-
-*Built for the forensics community — contributions welcome.*
+This reference is intended for authorized forensic investigations, incident response, and security research only. All information is provided for defensive and educational purposes.
