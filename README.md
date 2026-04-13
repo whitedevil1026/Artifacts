@@ -21,17 +21,6 @@ No installation. No internet required. No login. Just open the HTML file in any 
 
 ---
 
-## 📦 Files
-
-| File | Description |
-|---|---|
-| `windows-artifacts.html` | Main reference — 137 artifacts, 21 categories |
-| `attack-chain.html` | MITRE ATT&CK kill chain — 42 artifacts across 12 attack phases |
-| `memory-forensics.html` | Volatility 3 memory forensics reference *(coming soon)* |
-| `ad-deepdive.html` | Active Directory forensics deep dive *(coming soon)* |
-
----
-
 ## 🗂️ What's Covered — 137 Artifacts, 21 Categories
 
 | Category | Count | What's Inside |
