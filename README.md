@@ -4,6 +4,11 @@ A comprehensive Windows forensic artifacts reference built for investigators, in
 
 **Live site:** https://windowsartifacts.vercel.app
 
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+![Artifacts: 137](https://img.shields.io/badge/Artifacts-137-blue)
+![Categories: 21](https://img.shields.io/badge/Categories-21-blue)
+![Audit Score: 8.2/10](https://img.shields.io/badge/Audit%20Score-8.2%2F10-brightgreen)
+
 ---
 
 ## 📖 About This Project
@@ -48,6 +53,7 @@ No installation. No internet required. No login. Just open the HTML file in any 
 | 📧 Email | 2 | Outlook PST/OST files, Outlook attachment cache |
 
 ---
+
 ## ✨ Features
 
 **Search**
@@ -95,6 +101,24 @@ Works on phone during live investigations. Single column layout, scrollable filt
 ## 🛠️ Tools Referenced
 
 `Autopsy` `Volatility 3` `RegRipper` `Registry Explorer` `Chainsaw` `Hayabusa` `Hindsight` `MFTECmd` `PECmd` `LECmd` `JLECmd` `AmcacheParser` `AppCompatCacheParser` `SrumECmd` `EvtxECmd` `WxTCmd` `RBCmd` `ShellBagsExplorer` `DB Browser for SQLite` `FTK Imager` `Velociraptor` `Plaso` `log2timeline` `Impacket` `USB Detective` `SkypeLogView` `Nirsoft Suite`
+
+---
+
+## ✅ Accuracy & Audit
+
+This reference was reviewed in a GCFA-style technical audit (May 2026) against authoritative DFIR sources including Microsoft Learn, SANS FOR500/FOR508, Eric Zimmerman tool documentation, MITRE ATT&CK, Velociraptor artifact definitions, Forensics Wiki, and primary research blogs.
+
+**Overall audit score: 8.2 / 10**
+
+| Dimension | Score |
+|---|---|
+| Coverage | 9 / 10 |
+| Accuracy | 8 / 10 |
+| Depth | 9 / 10 |
+| Currency | 8 / 10 |
+| Usability | 9 / 10 |
+
+15 corrections were applied following the audit, including fixes to RecentApps OS coverage, AmCache/ShimCache relationship, certutil CryptnetUrlCache path, Hibernate SSD behavior, DPAPI master key path, Prefetch SSD myth, BAM/DAM command-line capture claim, Kerberos on-disk ticket paths, Sysmon OS support, Jump Lists default item count, UserAssist ROT13 scope, SDelete default pass count, Scheduled Tasks canonical path, and Skype legacy storage annotation.
 
 ---
 
